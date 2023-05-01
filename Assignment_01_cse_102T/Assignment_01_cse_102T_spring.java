@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 public class Assignment_01_cse_102T_spring {
     /**
-     * @author Umut ALTUN
      * @since 29.03.2023
      */
     public static void main(String[] args) {
