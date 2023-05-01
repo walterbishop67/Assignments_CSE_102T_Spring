@@ -1,6 +1,5 @@
 /**
  * @since 16.04.2023
- * @author Umut ALTUN
  */
 
 import java.util.ArrayList;
