@@ -54,10 +54,11 @@ public class Assignment03_20210808053 {
         System.out.println(cc.pay(s2, 200, false));
         s2.addToInventory(p, 20);
         cc.addToCart(s2, p, 50);
+        cc.addToCart(s2, cp, 20);
         System.out.println("son"+cc.receipt(s2));
         System.out.println(cc.pay(s2, 30000, true));
 
 
-        System.out.println(s2.customer_points.get(cc));
+        System.out.println(s2.getCustomerPoints(cc));
     }
 }

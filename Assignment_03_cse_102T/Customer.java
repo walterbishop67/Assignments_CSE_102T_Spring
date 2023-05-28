@@ -1,14 +1,18 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 class Customer {
     //Attribute of Customer
     private String name;
-    private HashMap<Product, Integer> cart_customer = new HashMap<>();
+    private HashMap<Product, Integer> cart_customer ;
+    private ArrayList<Product> producs = new ArrayList<>();
     private double totalDue = 0;
+    private int points;
 
     // Constructor that takes the name as parameter
     Customer(String name){
         this.name = name;
+        cart_customer = new HashMap<>();
     }
 
     //accessor and mutator methods of private fields
@@ -22,10 +26,8 @@ class Customer {
     //Adds the passed Product and number to the customer cart
     public void addToCart(Store store, Product product, int count){
         try{
-            if (store.getProductCount(product) < count)
-                throw new ProductNotFoundException(product);
 
-            if (store.getProductCount(product) < count)
+            if(store.getProductCount(product) < count)
                 throw new InvalidAmountException(count);
 
             if(cart_customer.containsKey(product)) {
@@ -33,10 +35,10 @@ class Customer {
                 cart_customer.put(product, count + a);
 
             }else
-                if (store.products.containsKey(product))
+                if (store.getProductCount(product) >= 0)
                     cart_customer.put(product, count);
-
-            totalDue += store.purchase(product, count);
+            producs.add(product);
+            totalDue += store.purchase(product, cart_customer.get(product));
 
         }catch (InvalidAmountException | ProductNotFoundException e) {
             System.out.println("ERROR: " + e);
@@ -52,7 +54,7 @@ class Customer {
 
         // Header
         receiptBuilder.append("Customer receipt for ").append(store.getName()).append("\n\n");
-        int quantity;
+        int quantity = 0;
 
         // Products in the cart
         for (HashMap.Entry<Product, Integer> entry : cart_customer.entrySet()) {
@@ -70,16 +72,20 @@ class Customer {
         return receiptBuilder.toString();
     }
     public double getTotalDue(Store store){///////////////////////////////////
-        if (cart_customer.isEmpty()) {
-            throw new StoreNotFoundException("Customer does not have a cart , the store: " + name);
+        try {
+            return totalDue;
+        }catch (StoreNotFoundException ex){
+            throw new StoreNotFoundException(store.getName());
+
         }
-        return totalDue;
+
     }
     public int getPoints(Store store){
-        if (!store.customer_points.containsKey(this)) {
-            throw new StoreNotFoundException("Customer does not have a cart , the store: " + name);
+        try{
+            return store.getCustomerPoints(this);
+        }catch (StoreNotFoundException e){
+            throw new StoreNotFoundException(store.getName());
         }
-        return store.customer_points.get(this);
     }
 
 
@@ -90,10 +96,11 @@ class Customer {
         if (amount < getTotalDue(store)) {
             throw new InsufficientFundsException(getTotalDue(store), amount);
         }
-        double superPay = amount - getTotalDue(store);//returns amount - getTotalDue(); (change)
-        if (store.customer_points.containsKey(this)) {
-            double getSuper = getTotalDue(store);
 
+        double superPay = amount - getTotalDue(store);//returns amount - getTotalDue(); (change)
+        if (points > 0) {
+            double getSuper = getTotalDue(store);
+            int points = store.getCustomerPoints(this);
             if (getPoints(store) >= 0) {
                 int getPoints = getPoints(store);
                 int remaningPoints = 0;
@@ -106,13 +113,13 @@ class Customer {
                         getPoints = getPoints(store) - remaningPoints;
                     }
                     pointsToMoney = getPoints * 0.01;
-                    store.customer_points.replace(this, remaningPoints);
+                    points = remaningPoints;
 
                 }
                 superPay = superPay + pointsToMoney;
 
-                int a = store.customer_points.get(this);
-                store.customer_points.replace(this, a + (int) (amount - superPay));
+                int a = store.getCustomerPoints(this);
+                points += (int) (amount - superPay);
             }
         }
         System.out.println("Thank you for your business");

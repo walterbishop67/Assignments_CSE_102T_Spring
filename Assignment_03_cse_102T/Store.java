@@ -4,14 +4,16 @@ public class Store {
     //Attributes of Store
     private String name;
     private String website;
-    HashMap<Product, Integer> products = new HashMap<>();
-    private int points;
-    HashMap<Customer, Integer> customer_points = new HashMap<>();//private yaptım
+    private HashMap<Product, Integer> products;
+    int points;
+    private HashMap<Customer, Integer> customer_points;
 
     //Constructor.Creates an empty list of products
     Store(String name, String website) {
         this.name = name;
         this.website = website;
+        products = new HashMap<>();
+        customer_points = new HashMap<>();
     }
 
     //accessor and mutator methods of private fields
