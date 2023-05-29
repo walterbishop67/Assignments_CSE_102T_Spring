@@ -7,7 +7,7 @@ public class Assignment03_20210808053 {
 
         Customer cc = new Customer("Club CSE 102");
         s1.addCustomer(cc);
-        s2.addCustomer(cc);
+
 
         Product p = new Product(123456L, "Computer", 1000.00);
         FoodProduct fp = new FoodProduct(456798L, "Snickers", 2,250, true
@@ -20,7 +20,7 @@ public class Assignment03_20210808053 {
         s2.addToInventory(fp,100);
         s1.addToInventory(cp,28);
 
-        System.out.println(s1.getName() + " has "+ s1.getInventorySize() + " products");
+        System.out.println(s1.getName() + " has "+ s1.getCount() + " products");
         System.out.println(+s1.getProductCount(p));
 
 
@@ -40,25 +40,22 @@ public class Assignment03_20210808053 {
 
         //System.out.println("After paying: " + c.pay(s2, 2000, true));//ex
 
-        System.out.println("After paying: " + c.pay(s1, 2100, true));
+        //System.out.println("After paying: " + c.pay(s1, 2100, true));
 
         //System.out.println("Total Due - " + c.getTotalDue(s1));//ex
         //System.out.println("\n\nReceipt:\n" + c.receipt(s1));//ex
 
         cc.addToCart(s2, fp, 2);
         cc.addToCart(s2, fp, 1);
-        System.out.println(cc.receipt(s2));
+        cc.addToCart(s1, p, 1);
 
+
+        //cc.getTotalDue(s1);
         cc.addToCart(s2, fp, 10);
         System.out.println(cc.receipt(s2));
-        System.out.println(cc.pay(s2, 200, false));
-        s2.addToInventory(p, 20);
-        cc.addToCart(s2, p, 50);
-        cc.addToCart(s2, cp, 20);
-        System.out.println("son"+cc.receipt(s2));
-        System.out.println(cc.pay(s2, 30000, true));
+        System.out.println(cc.receipt(s1));
+        System.out.println(cc.receipt(s2));
+        System.out.println(cc.pay(s2, 26, false));
 
-
-        System.out.println(s2.getCustomerPoints(cc));
     }
 }
