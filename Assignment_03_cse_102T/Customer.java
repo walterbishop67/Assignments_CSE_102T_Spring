@@ -1,6 +1,5 @@
+import java.util.ArrayList;
 import java.util.HashMap;
-
-
 class Customer {
     //Attribute of Customer
     private String name;
@@ -8,7 +7,6 @@ class Customer {
     private HashMap<Store, Double> totalDue = new HashMap<>();
     private HashMap<Store, HashMap<Product, Integer>> store_list = new HashMap<>();
     HashMap<Store, Integer> pointss = new HashMap<>();
-
 
 
     // Constructor that takes the name as parameter
@@ -26,24 +24,23 @@ class Customer {
     }
 
     //Adds the passed Product and number to the customer cart
-
     public void addToCart(Store store, Product product, int count){
-        HashMap <Product, Integer> hashMap= new HashMap<>();
-        if (store_list.get(store) == null)
-            hashMap.put(product, count);
-        else
-            hashMap = store_list.get(store);
+
         try{
             if(store.getProductCount(product) < count)
                 throw new InvalidAmountException(count);
 
-            if(cart_customer.containsKey(product)) {
-                int a = cart_customer.get(product);
-                cart_customer.put(product, count + a);
-
-            }else
-                if (store.getProductCount(product) >= 0)
+            if (store_list.get(store) == null){
+                cart_customer.put(product, count);
+                store_list.put(store, cart_customer);
+            }else {
+                HashMap<Product, Integer> sdv = store_list.get(store);
+                if (sdv.containsKey(product)){
+                    int a = sdv.get(product);
+                    cart_customer.put(product, a + count);
+                }else
                     cart_customer.put(product, count);
+            }
 
             double d;
             if (totalDue.get(store) == null)
@@ -52,7 +49,7 @@ class Customer {
                 d = totalDue.get(store);
 
             totalDue.put(store, d + store.purchase(product, count));
-            store_list.put(store, hashMap);
+
 
         }catch (InvalidAmountException | ProductNotFoundException e) {
             System.out.println("ERROR: " + e);
@@ -74,6 +71,7 @@ class Customer {
         for (HashMap.Entry<Product, Integer> entry : as.entrySet()) {
             Product product = entry.getKey();
             quantity = entry.getValue();
+
 
             receiptBuilder.append(product.getId()).append(" - ").append(product.getName()).append(" @ ")
                     .append(product.getPrice()).append(" X ").append(quantity).append(" = ").append(product.getPrice() * quantity)
