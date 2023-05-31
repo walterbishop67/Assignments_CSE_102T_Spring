@@ -1,5 +1,5 @@
-import java.util.Date;
 import java.util.HashMap;
+
 
 class Customer {
     //Attribute of Customer
@@ -8,6 +8,8 @@ class Customer {
     private HashMap<Store, Double> totalDue = new HashMap<>();
     private HashMap<Store, HashMap<Product, Integer>> store_list = new HashMap<>();
     HashMap<Store, Integer> pointss = new HashMap<>();
+
+
 
     // Constructor that takes the name as parameter
     Customer(String name){
@@ -24,11 +26,14 @@ class Customer {
     }
 
     //Adds the passed Product and number to the customer cart
-    HashMap <Product, Integer> hashMap = new HashMap<>();
+
     public void addToCart(Store store, Product product, int count){
-
+        HashMap <Product, Integer> hashMap= new HashMap<>();
+        if (store_list.get(store) == null)
+            hashMap.put(product, count);
+        else
+            hashMap = store_list.get(store);
         try{
-
             if(store.getProductCount(product) < count)
                 throw new InvalidAmountException(count);
 
@@ -40,23 +45,19 @@ class Customer {
                 if (store.getProductCount(product) >= 0)
                     cart_customer.put(product, count);
 
-
-
-
             double d;
             if (totalDue.get(store) == null)
                 d = 0;
             else
                 d = totalDue.get(store);
-            totalDue.put(store, d + store.purchase(product, count));
 
+            totalDue.put(store, d + store.purchase(product, count));
             store_list.put(store, hashMap);
 
         }catch (InvalidAmountException | ProductNotFoundException e) {
             System.out.println("ERROR: " + e);
         }
     }
-
     public String receipt(Store store){
         if (store_list.get(store) == null) {
             throw new StoreNotFoundException("Customer does not have a cart , the store: " + name);
@@ -66,10 +67,11 @@ class Customer {
 
         // Header
         receiptBuilder.append("Customer receipt for ").append(store.getName()).append("\n\n");
-        int quantity = 0;
+        int quantity ;
 
         // Products in the cart
-        for (HashMap.Entry<Product, Integer> entry : cart_customer.entrySet()) {
+        HashMap<Product, Integer> as = store_list.get(store);
+        for (HashMap.Entry<Product, Integer> entry : as.entrySet()) {
             Product product = entry.getKey();
             quantity = entry.getValue();
 
@@ -83,6 +85,7 @@ class Customer {
         receiptBuilder.append("--------------------------------------\n").append("Total Due - ").append(getTotalDue(store)).append("\n");
 
         return receiptBuilder.toString();
+
     }
     public double getTotalDue(Store store){
         if(store_list.get(store) == null)
@@ -92,49 +95,39 @@ class Customer {
     public int getPoints(Store store){
         try{
             return store.getCustomerPoints(this);
+
         }catch (StoreNotFoundException e){
             throw new StoreNotFoundException(store.getName());
         }
     }
 
     public double pay(Store store, double amount, boolean usePoints) {
-        if (store_list.get(store) == null) {////////////////
+        if (store_list.get(store) == null) {
             throw new StoreNotFoundException(store.getName());
         }
         if (amount < getTotalDue(store)) {
             throw new InsufficientFundsException(getTotalDue(store), amount);
         }
+        double superPay = amount - getTotalDue(store);
 
-        double superPay = amount - getTotalDue(store);//returns amount - getTotalDue(); (change)
-        try{
-            store.getCustomerPoints(this);
-            int points = 0;
-            double getSuper = getTotalDue(store);
-            if (getPoints(store) >= 0) {
-                int getPoints = pointss.get(store);
-                int remaningPoints = 0;
-                double pointsToMoney = 0;
-
-                if (usePoints) {
-
-                    if (getPoints(store) * 0.01 > getSuper) {
-                        remaningPoints = (int) (getPoints(store) - getSuper * 100);
-                        getPoints = getPoints(store) - remaningPoints;
-                    }
-                    pointsToMoney = getPoints * 0.01;
-                    points = remaningPoints;
-
+        pointss.putIfAbsent(store, 0);
+        try {
+            int getPoints = pointss.get(store);
+            int remaningPoints = 0;
+            double pointsToMoney = 0;
+            if (usePoints) {
+                if (pointss.get(store) * 0.01 > getTotalDue(store)) {
+                    remaningPoints = (int) (pointss.get(store) - getTotalDue(store) * 100);
+                    getPoints = pointss.get(store) - remaningPoints;
                 }
-                superPay = superPay + pointsToMoney;
-
-                int a = store.getCustomerPoints(this);
-                points += (int) (amount - superPay);
-                points = 20;
-
-                pointss.put(store, 20);
-                System.out.println(pointss.get(store));
+                pointsToMoney = getPoints * 0.01;
             }
-        }catch (CustomerNotFoundException ignored){}
+            superPay = superPay + pointsToMoney;
+            pointss.put(store, (remaningPoints + (int) (amount - superPay)));
+
+        } catch (CustomerNotFoundException ignored) {}
+
+        System.out.println("points " + pointss.get(store));
         totalDue.clear();
         store_list.clear();
         cart_customer.clear();

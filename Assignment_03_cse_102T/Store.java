@@ -49,7 +49,8 @@ public class Store {
     public int getCustomerPoints (Customer customer){
         if(!customer_points.containsKey(customer))
             throw new CustomerNotFoundException(customer);
-        return customer_points.get(customer);//pay methodu içinde puan hesabı için çağır
+        customer_points.put(customer, customer.pointss.get(this));
+        return customer_points.get(customer);
     }
 
     public void removeProduct(Product product){

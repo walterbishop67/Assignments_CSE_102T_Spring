@@ -7,6 +7,9 @@ public class Assignment03_20210808053 {
 
         Customer cc = new Customer("Club CSE 102");
         s1.addCustomer(cc);
+        s2.addCustomer(cc);
+        s1.addCustomer(c);
+        s2.addCustomer(c);
 
 
         Product p = new Product(123456L, "Computer", 1000.00);
@@ -40,7 +43,7 @@ public class Assignment03_20210808053 {
 
         //System.out.println("After paying: " + c.pay(s2, 2000, true));//ex
 
-        //System.out.println("After paying: " + c.pay(s1, 2100, true));
+        System.out.println("After paying: " + c.pay(s1, 2100, true));
 
         //System.out.println("Total Due - " + c.getTotalDue(s1));//ex
         //System.out.println("\n\nReceipt:\n" + c.receipt(s1));//ex
@@ -56,6 +59,12 @@ public class Assignment03_20210808053 {
         System.out.println(cc.receipt(s1));
         System.out.println(cc.receipt(s2));
         System.out.println(cc.pay(s2, 26, false));
+
+        cc.addToCart(s2, fp, 2);
+        cc.addToCart(s2, fp, 1);
+        System.out.println(cc.receipt(s2));
+        System.out.println(cc.pay(s2, 26, true));
+        System.out.println(s2.getCustomerPoints(cc));
 
     }
 }
