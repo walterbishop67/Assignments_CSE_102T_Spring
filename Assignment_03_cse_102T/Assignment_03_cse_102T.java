@@ -10,9 +10,9 @@ public class Assignment03_20210808053 {
         Store s1 = new Store("bim", "www.bim.com.tr");
         Store s2 = new Store("migros", "www.migros.com.tr");
 
-        Customer c1 = new Customer("muharrem");
-        Customer c2 = new Customer("gözde");
-        Customer c3 = new Customer("erdinç");
+        Customer c1 = new Customer("dsrth");
+        Customer c2 = new Customer("sdfghs");
+        Customer c3 = new Customer("asedfh");
 
         Product p1 = new Product(123456L, "ton balığı", 30);
         Product p2 = new Product(456789L, "ekmek", 5);
@@ -33,9 +33,7 @@ public class Assignment03_20210808053 {
 
 
 
-        //-----------------------
-        //kullanıcıya mağazaya eklemeden olabilir hataaaaa
-        //pay metodunu kullanmadan puanlar 0 a ayarlanmıyor hata veriyor
+       
         c1.addToCart(s1, p1, 4);
         c1.addToCart(s2, p3, 2);
         c1.addToCart(s1, p1, 1);
